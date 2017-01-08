@@ -34,8 +34,6 @@ import java.util.Random;
 public class GhostActivity extends AppCompatActivity {
     private static final String TAG = "GhostActivity";
 
-    private static final String COMPUTER_TURN = "Computer's turn";
-    private static final String USER_TURN = "Your turn";
     private static final String KEY_USER_TURN = "keyUserTurn";
     private static final String KEY_CURRENT_WORD = "keyCurrentWord";
     private static final String KEY_SAVED_STATUS = "keySavedStatus";
@@ -52,13 +50,19 @@ public class GhostActivity extends AppCompatActivity {
         AssetManager assetManager = getAssets();
         try {
             InputStream inputStream = assetManager.open("words.txt");
-            // Initialize your dictionary from the InputStream.
+
+            dictionary = new SimpleDictionary(inputStream);
+                      // new FastDictionary(inputStream);
         } catch (IOException e) {
-            Toast toast = Toast.makeText(this, "Could not load dictionary", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(this, R.string.load_dictionary_failed, Toast.LENGTH_LONG);
             toast.show();
         }
+
+        // TODO(you): Handle Bundle savedInstanceState
         onStart(null);
     }
+
+    // TODO(you): Handle onSaveInstanceState
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -89,6 +93,13 @@ public class GhostActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        int unicode = event.getUnicodeChar();
+        if (('A' <= unicode && unicode <= 'Z') || 'a' <= unicode && unicode <= 'z') {
+            String character = ((char) unicode + "").toLowerCase();
+            currentWord += character;
+            ((TextView) findViewById(R.id.ghostText)).setText(currentWord);
+            computerTurn();
+        }
         return super.onKeyUp(keyCode, event);
     }
 
@@ -104,18 +115,70 @@ public class GhostActivity extends AppCompatActivity {
         text.setText("");
         TextView label = (TextView) findViewById(R.id.gameStatus);
         if (userTurn) {
-            label.setText(USER_TURN);
+            label.setText(R.string.user_turn);
         } else {
-            label.setText(COMPUTER_TURN);
+            label.setText(R.string.computer_turn);
             computerTurn();
         }
         return true;
     }
 
+    /**
+     * Challenges the current word. Returns true if the challenge was successful, false otherwise.
+     * @param fromUser
+     * @return
+     */
+    private boolean doChallenge(boolean fromUser) {
+        TextView status = (TextView) findViewById(R.id.gameStatus);
+        if (dictionary.isWord(currentWord)) {
+            if (!fromUser) {
+                // It is a word! The user loses.
+                status.setText(String.format("%s is a word. The computer wins!", currentWord));
+                return true;
+            } else {
+                // The computer loses, it has formed a word.
+                status.setText(String.format("%s is a word. You win!", currentWord));
+                return true;
+            }
+        } else if (TextUtils.isEmpty(dictionary.getAnyWordStartingWith(currentWord))) {
+            if (!fromUser) {
+                // This is not a valid word prefix. The user loses.
+                status.setText(String.format("%s is an invalid prefix. The computer wins!",
+                        currentWord));
+                return true;
+            } else {
+                status.setText(String.format("%s is an invalid prefix. You win!", currentWord));
+                return true;
+            }
+        }
+        if (fromUser) {
+            // We've challenged and failed. The user loses.
+            status.setText(String.format("%s is a valid prefix and not a word. The computer wins!",
+                    currentWord));
+        }
+        return false;
+    }
+
     private void computerTurn() {
-        TextView label = (TextView) findViewById(R.id.gameStatus);
+        TextView status = (TextView) findViewById(R.id.gameStatus);
+
+        // Checks if the user's currentWord is a full word, or if it is an invalid prefix.
+        boolean challengeSuccessful = doChallenge(/* from the computer */ false);
+        if (challengeSuccessful) {
+            return;
+        }
+
+        userTurn = false;
+
         // Do computer turn stuff then make it the user's turn again
+        status.setText(R.string.computer_turn);
+        String next = dictionary.getGoodWordStartingWith(currentWord);
+        currentWord += next.charAt(currentWord.length());
+        // We can now update the text field with the computer's word.
+        ((TextView) findViewById(R.id.ghostText)).setText(currentWord);
+
+        // Keep playing...
         userTurn = true;
-        label.setText(USER_TURN);
+        status.setText(R.string.user_turn);
     }
 }

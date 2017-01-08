@@ -34,13 +34,14 @@ public class SimpleDictionary implements GhostDictionary {
 
     public SimpleDictionary(InputStream wordListStream) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(wordListStream));
-        words = new ArrayList<>();
+        ArrayList words = new ArrayList<>();
         String line = null;
         while((line = in.readLine()) != null) {
             String word = line.trim();
             if (word.length() >= MIN_WORD_LENGTH)
               words.add(line.trim());
         }
+        mRandom = new Random();
     }
 
     @VisibleForTesting
@@ -56,6 +57,7 @@ public class SimpleDictionary implements GhostDictionary {
 
     @Override
     public String getAnyWordStartingWith(String prefix) {
+        // TODO: Implement this using Binary Search
         return null;
     }
 

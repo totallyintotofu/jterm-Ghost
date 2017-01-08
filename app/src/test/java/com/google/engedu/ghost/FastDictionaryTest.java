@@ -1,16 +1,3 @@
-package com.google.engedu.ghost;
-
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 /*
  *  Copyright 2016 Google Inc. All Rights Reserved.
  *
@@ -26,6 +13,20 @@ import static org.junit.Assert.assertTrue;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+package com.google.engedu.ghost;
+
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 public class FastDictionaryTest {
     @Test
     public void testIsWord() {
