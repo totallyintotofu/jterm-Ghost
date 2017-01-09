@@ -19,7 +19,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class TrieNode {
-    private HashMap<String, TrieNode> children;
+    // A map from the next character in the alphabet to the trie node containing those words
+    private HashMap<Character, TrieNode> children;
+    // If true, this node represents a complete word.
     private boolean isWord;
 
     public TrieNode() {
@@ -27,17 +29,45 @@ public class TrieNode {
         isWord = false;
     }
 
+    /**
+     * Add the string as a child of this trie node.
+     *
+     * @param s String representing partial suffix of a word.
+     */
     public void add(String s) {
+        // TODO(you): add String s to this node.
     }
 
+    /**
+     * Determine whether this node is part of a complete word for the string.
+     *
+     * @param s String representing partial suffix of a word.
+     * @return
+     */
     public boolean isWord(String s) {
+        // TODO(you): determine whether this node is part of a complete word for String s.
         return false;
     }
 
+    /**
+     * Find any complete word with this partial segment.
+     *
+     * @param s String representing partial suffix of a word.
+     * @return
+     */
     public String getAnyWordStartingWith(String s) {
+        // TODO(you):
         return null;
     }
 
+    /**
+     * Find a good complete word with this partial segment.
+     *
+     * Definition of "good" left to implementor.
+     *
+     * @param s String representing partial suffix of a word.
+     * @return
+     */
     public String getGoodWordStartingWith(String s) {
         return null;
     }
